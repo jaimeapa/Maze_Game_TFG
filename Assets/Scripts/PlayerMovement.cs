@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     public float wallCounter = 0;
     //public Button button;
     public GameObject menu;
-    public Vector3 startingPos;
+    public Vector3 startingPos = new Vector3(26.5f, 8.16f, 21.19f);
     public GameObject restartButton;
     public GameObject playerPrefab;
     public SpawnManager spawnManager;
@@ -43,8 +43,20 @@ public class PlayerMovement : MonoBehaviour
 
     
     
-    public void StartGame()
+    public void StartGame(int difficulty)
     {
+        if(difficulty == 0){
+            startingPos = new Vector3(startingPos.x + 1, startingPos.y - 1, startingPos.z);
+        }
+        if(difficulty == 2)
+        {
+            startingPos = new Vector3(26.5f, 8.16f, 21.19f);
+        }
+        if(difficulty == 2)
+        {
+            startingPos = new Vector3(startingPos.x - 1, startingPos.y + 2, startingPos.z);
+        }
+
         spawnManager.SpawnPlayer(startingPos);
         isPlaying = true;
         menu.gameObject.SetActive(false);

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Unity.VisualScripting;
+using System;
+using System.IO;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -20,14 +22,39 @@ public class MazeGenerator : MonoBehaviour
     private GameObject finishLineToDestroy;
     private MazeCell[,] mazeGrid;
     private Vector3 startingPosition = new Vector3(26.5f, 8.16f,20.64f);
+    private Vector3 finishPos;
+    private String maze;
+    public int mazeNumber = 0;
+    public int mazeShape = 2;
+    public int difficulty;
     // Start is called before the first frame update
     void Start()
     {
         
-    }
+    } 
     
-    public void CreateMaze()
+    public void CreateMaze(int difficulty)
     {
+        if(difficulty == 0)
+        {
+            mazeDepth = 6;
+            mazeWidth = 6;
+            startingPosition = new Vector3(startingPosition.x + 1, startingPosition.y - 1, startingPosition.z);
+        }else{
+            if(difficulty == 2)
+            {
+                mazeDepth = 10;
+                mazeWidth = 10;
+                startingPosition = new Vector3(startingPosition.x - 1, startingPosition.y + 2, startingPosition.z);
+            }else 
+            {
+                mazeDepth = 8;
+                mazeWidth = 8;
+                startingPosition = new Vector3(26.5f, 8.16f,20.64f);
+            }
+        }
+        finishPos = new Vector3(startingPosition.x + mazeWidth - 1, startingPosition.y - mazeDepth + 1, 21.33f);
+        maze =  mazeWidth + "\n" + mazeDepth + "\n";
         Debug.Log("Maze is Being created");
         mazeGrid = new MazeCell[mazeWidth, mazeDepth];
 
@@ -39,7 +66,13 @@ public class MazeGenerator : MonoBehaviour
             }
         }
         GenerateMaze(null, mazeGrid[0,0]);
-        Instantiate(finishLine);
+        Instantiate(finishLine, finishPos, finishLine.transform.rotation);
+        String fileName = DateTime.Now.ToString("yyyy-MM-dd-hh-mm") + "-" + mazeNumber;
+
+        string fullPath = Application.dataPath + "/MazesSaved/" + fileName + ".txt";
+        Debug.Log(fullPath);
+        File.WriteAllText(fullPath, maze);
+        maze = "";
     }
 
     private void GenerateMaze(MazeCell previousCell, MazeCell currentCell)
@@ -59,14 +92,62 @@ public class MazeGenerator : MonoBehaviour
             }
         }while (nextCell != null);
         //finishLine.gameObject.SetActive(true);
-        
-        
+        //DateTime date = DateTime.Now;
+                
     }
 
     private MazeCell GetNextUnvisitedCell(MazeCell currentCell)
     {
-        var unvisitedCells = GetUnvisitedCells(currentCell);
-        return unvisitedCells.OrderBy(_ => Random.Range(1,10)).FirstOrDefault();
+        
+        if(mazeShape == 0)
+        {
+            var unvisitedCells = GetUnvisitedCells(currentCell).ToList();
+            
+             if (unvisitedCells.Count == 0)
+                return null;
+
+            var weightedCells = new List<MazeCell>();
+            foreach (var cell in unvisitedCells)
+            {
+                bool isVertical = Mathf.Abs((int)cell.transform.position.y - (int)currentCell.transform.position.y) > 0;
+                int weight = isVertical ? 3 : 1;
+                for (int i = 0; i < weight; i++)
+                {
+                    weightedCells.Add(cell);
+                }
+                
+            }
+            return weightedCells[UnityEngine.Random.Range(0, weightedCells.Count)];
+        }
+        else
+        {
+            if(mazeShape == 1)
+            {
+                var unvisitedCells1 = GetUnvisitedCells(currentCell).ToList();
+            
+                if (unvisitedCells1.Count == 0)
+                    return null;
+
+                var weightedCells = new List<MazeCell>();
+                foreach (var cell in unvisitedCells1)
+                {
+                    bool isHorizontal = Mathf.Abs((int)cell.transform.position.x - (int)currentCell.transform.position.x) > 0;
+                    int weight = isHorizontal ? 3 : 1;
+                    for (int i = 0; i < weight; i++)
+                    {
+                        weightedCells.Add(cell);
+                    }
+                
+                }
+                return weightedCells[UnityEngine.Random.Range(0, weightedCells.Count)];
+            }else
+            {
+                var unvisitedCells = GetUnvisitedCells(currentCell);
+                return unvisitedCells.OrderBy(_ => UnityEngine.Random.Range(1,10)).FirstOrDefault();
+            }
+            
+        }
+        
     }
 
     private IEnumerable<MazeCell> GetUnvisitedCells(MazeCell currentCell)
@@ -74,6 +155,8 @@ public class MazeGenerator : MonoBehaviour
         int x = Mathf.Abs((int)currentCell.transform.position.x - (int) startingPosition.x);
         int y = Mathf.Abs((int)currentCell.transform.position.y - (int) startingPosition.y);
         //mazeWidth = startingPosition.x + mazeWidth;
+
+        maze = maze + x + "," + y + "\n";
 
         if(x+1 < mazeWidth)
         {
@@ -161,6 +244,66 @@ public class MazeGenerator : MonoBehaviour
         finishLineToDestroy = GameObject.FindGameObjectWithTag("Finish Line");
         Destroy(finishLineToDestroy);
         Debug.Log("Maze Destroyed");
+    }
+
+    public void CreateMazeFromFile(string Path)
+    {
+        string mazefromFile = File.ReadAllText(Path);
+        string[ ] linesInFile = mazefromFile.Split("\n");
+        int.TryParse(linesInFile[0], out mazeWidth);
+        int.TryParse(linesInFile[1], out mazeDepth);
+        int[] xcoordenates = new int[linesInFile.Length - 2];
+        int[] ycoordenates = new int[linesInFile.Length - 2];
+        int length = xcoordenates.Length;
+        for (int i = 2;  i < linesInFile.Length; i++)
+        {
+            string line = linesInFile[i];
+            if (!string.IsNullOrWhiteSpace(line))
+            {
+                //string trimmedLine = line.Trim(new char[] { '[', ']', ' ', '\r' });
+
+                // Dividir en las coordenadas x e y
+                string[] partes = line.Split(',');
+
+                if (partes.Length == 2 && int.TryParse(partes[0], out int x) &&int.TryParse(partes[1], out int y))
+                {
+                    Debug.Log("Coordenada x: " + x + ", y: " + y);
+                    xcoordenates[i-2] = x;
+                    ycoordenates[i-2] = y;
+                }
+            }
+        }
+        Debug.Log(mazeDepth +", "+ mazeWidth);
+        mazeGrid = new MazeCell[mazeWidth, mazeDepth];
+
+        for (int i = 0; i < mazeWidth; i++)
+        {
+            for (int j = 0; j < mazeDepth; j++)
+            {
+                mazeGrid[i,j] = Instantiate(mazeCellPrefab, new Vector3(startingPosition.x + i, startingPosition.y - j, startingPosition.z), Quaternion.identity);
+            }
+        }
+
+        for(int i = 0; i < length-2; i++)
+        {
+            GenerateMazeFromFile(xcoordenates[i], ycoordenates[i], xcoordenates[i+1], ycoordenates[i+1]);
+        }
+        Debug.Log(xcoordenates[length-2] + ", "+ ycoordenates[length-2] + "\n" + xcoordenates[length-1] + "," + ycoordenates[length-1]);
+        GenerateMaze(mazeGrid[xcoordenates[length-2], ycoordenates[length-2]], mazeGrid[xcoordenates[length-1], ycoordenates[length-1]]);
+        //GenerateMaze(null, mazeGrid[0,0]);
+        Instantiate(finishLine);
+    }
+    public void GenerateMazeFromFile(int x1, int y1, int x2, int y2)
+    {
+        MazeCell previousCell = mazeGrid[x1, y1];
+        MazeCell currentCell = mazeGrid[x2, y2];
+        if(x1 == 0 && y1 == 0)
+        {
+            previousCell.Visit();
+        }
+        currentCell.Visit();
+        ClearWall(previousCell, currentCell);
+        new WaitForSeconds(0.05f);
     }
 
     // Update is called once per frame

@@ -3,22 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayButton : MonoBehaviour
+public class DifficultySelection : MonoBehaviour
 {
     public PlayerMovement playerMovement;
     public Button button;
     public MazeGenerator mazeGenerator;
-    private int mazeNumber = 0;
-    public GameObject menu;
-    public GameObject playButton;
+    public int difficulty;
     // Start is called before the first frame update
     void Start()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(PressButton);
+        button.onClick.AddListener(SetDifficulty);
         mazeGenerator = GameObject.Find("MazeGenerator").GetComponent<MazeGenerator>();
-        //playerMovement = GameObject.Find("Player").GetComponent<PlayerMovement>();
-    
     }
 
     // Update is called once per frame
@@ -27,20 +23,16 @@ public class PlayButton : MonoBehaviour
         
     }
 
-    public void PressButton()
+     public void SetDifficulty()
     {
         Debug.Log("Start Playing");
-        mazeNumber += 1;
-        mazeGenerator.mazeNumber = mazeNumber;
-        //mazeGenerator.CreateMaze(1);
+        mazeGenerator.CreateMaze(difficulty);
         //string fileName = "2024-10-31-08-55-1";
         //string fileName = "prueba";
         //string fullPath = Application.dataPath + "/MazesSaved/" + fileName + ".txt";
         //mazeGenerator.CreateMazeFromFile(fullPath);
         new WaitForSeconds(0.05f);
-        playButton.gameObject.SetActive(false);
-        menu.gameObject.SetActive(true);
-        //playerMovement.StartGame();
+        playerMovement.StartGame(difficulty);
         
     }
 }
