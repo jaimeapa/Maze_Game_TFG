@@ -25,7 +25,7 @@ public class MazeGenerator : MonoBehaviour
     private Vector3 finishPos;
     private String maze;
     public int mazeNumber = 0;
-    public int mazeShape = 2;
+    public int mazeShape = 0;
     public int difficulty;
     // Start is called before the first frame update
     void Start()
@@ -39,7 +39,8 @@ public class MazeGenerator : MonoBehaviour
         {
             mazeDepth = 6;
             mazeWidth = 6;
-            startingPosition = new Vector3(startingPosition.x + 1, startingPosition.y - 1, startingPosition.z);
+            //startingPosition = new Vector3(startingPosition.x + 1, startingPosition.y - 1, startingPosition.z);
+            startingPosition = new Vector3(28f,7f,17f);
         }else{
             if(difficulty == 2)
             {
@@ -53,7 +54,7 @@ public class MazeGenerator : MonoBehaviour
                 startingPosition = new Vector3(26.5f, 8.16f,20.64f);
             }
         }
-        finishPos = new Vector3(startingPosition.x + mazeWidth - 1, startingPosition.y - mazeDepth + 1, 21.33f);
+        finishPos = new Vector3(startingPosition.x + mazeWidth - 1, startingPosition.y - mazeDepth + 1, startingPosition.z + 0.8f);
         maze =  mazeWidth + "\n" + mazeDepth + "\n";
         Debug.Log("Maze is Being created");
         mazeGrid = new MazeCell[mazeWidth, mazeDepth];
@@ -67,7 +68,7 @@ public class MazeGenerator : MonoBehaviour
         }
         GenerateMaze(null, mazeGrid[0,0]);
         Instantiate(finishLine, finishPos, finishLine.transform.rotation);
-        String fileName = DateTime.Now.ToString("yyyy-MM-dd-hh-mm") + "-" + mazeNumber;
+        String fileName = DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
 
         string fullPath = Application.dataPath + "/MazesSaved/" + fileName + ".txt";
         Debug.Log(fullPath);
@@ -99,7 +100,7 @@ public class MazeGenerator : MonoBehaviour
     private MazeCell GetNextUnvisitedCell(MazeCell currentCell)
     {
         
-        if(mazeShape == 0)
+        if(mazeShape == 1)
         {
             var unvisitedCells = GetUnvisitedCells(currentCell).ToList();
             
@@ -121,7 +122,7 @@ public class MazeGenerator : MonoBehaviour
         }
         else
         {
-            if(mazeShape == 1)
+            if(mazeShape == 2)
             {
                 var unvisitedCells1 = GetUnvisitedCells(currentCell).ToList();
             

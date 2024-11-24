@@ -11,6 +11,8 @@ TagManager:
   - Wall
   - Restart
   - Manager
+  - Left Hand
+  - Right Hand
   layers:
   - Default
   - TransparentFX

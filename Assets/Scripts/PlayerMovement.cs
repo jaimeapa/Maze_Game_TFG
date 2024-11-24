@@ -29,11 +29,16 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         reticula = GameObject.Find("Reticula");
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*if(restartButton == null)
+        {
+            restartButton = GameObject.Find("RestartButton");
+        }*/
         if (restart)
         {
             isPlaying = true;
@@ -46,9 +51,10 @@ public class PlayerMovement : MonoBehaviour
     public void StartGame(int difficulty)
     {
         if(difficulty == 0){
-            startingPos = new Vector3(startingPos.x + 1, startingPos.y - 1, startingPos.z);
+            //startingPos = new Vector3(startingPos.x + 1, startingPos.y - 1, startingPos.z);
+            startingPos = new Vector3(28f, 7f, 17.7f);
         }
-        if(difficulty == 2)
+        if(difficulty == 1)
         {
             startingPos = new Vector3(26.5f, 8.16f, 21.19f);
         }
@@ -78,5 +84,12 @@ public class PlayerMovement : MonoBehaviour
         scoreText.text = "Score: " + wallCounter;
     }
 
+    public void Restart()
+    {
+        Debug.Log("Restart Button appearing...");
+        isPlaying = true;
+
+        restartButton.gameObject.SetActive(true);
+    }
    
 }
