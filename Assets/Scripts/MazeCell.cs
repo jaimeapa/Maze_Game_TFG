@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MazeCell : MonoBehaviour
 {
+    public int x;
+    public int y;
    [SerializeField]
     private GameObject leftWall;
 
@@ -20,13 +22,16 @@ public class MazeCell : MonoBehaviour
     private GameObject unvisitedObject;
     [SerializeField]
     private GameObject mazeFloor;
+    public bool visitedByPlayer = false;
     
     public bool isVistited{get;private set; }
     public void Visit()
     {
         isVistited = true;
         //unvisitedObject.SetActive(false);
-        Destroy(unvisitedObject);
+        if(unvisitedObject != null){
+            Destroy(unvisitedObject);
+        }
     }
     public void ClearLeftWall()
     {
@@ -51,5 +56,28 @@ public class MazeCell : MonoBehaviour
     public void ClearMazeFloor()
     {
         Destroy(mazeFloor);
+    }
+    public bool HasLeftWall()
+    {
+        return leftWall != null;
+    }
+    public bool HasRightWall()
+    {
+        return rightWall != null;
+    }
+    public bool HasBackWall()
+    {
+        return backWall != null;
+    }
+    public bool HasFrontWall()
+    {
+        return frontWall != null;
+    }
+    public void MarkAsVisited()
+    {
+        visitedByPlayer = true;
+    }
+    public void VisitAgain(){
+        isVistited = false;
     }
 }

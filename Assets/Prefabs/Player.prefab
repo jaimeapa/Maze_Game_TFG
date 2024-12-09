@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 100562866502307396}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -120,10 +120,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reticula: {fileID: 0}
-  speed: 0
   wallCounter: 0
   restart: 0
   playerMovement: {fileID: 0}
+  raycastReticula: {fileID: 0}
 --- !u!54 &100562866502307396
 Rigidbody:
   m_ObjectHideFlags: 0

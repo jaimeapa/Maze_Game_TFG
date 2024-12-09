@@ -21,8 +21,8 @@ public class MazeGenerator : MonoBehaviour
     private GameObject finishLine;
     private GameObject finishLineToDestroy;
     private MazeCell[,] mazeGrid;
-    private Vector3 startingPosition = new Vector3(26.5f, 8.16f,20.64f);
-    private Vector3 finishPos;
+    public Vector3 startingPosition = new Vector3(26.5f, 8.16f,20.64f);
+    public Vector3 finishPos;
     private String maze;
     public int mazeNumber = 0;
     public int mazeShape = 0;
@@ -54,7 +54,7 @@ public class MazeGenerator : MonoBehaviour
                 startingPosition = new Vector3(26.5f, 8.16f,20.64f);
             }
         }
-        finishPos = new Vector3(startingPosition.x + mazeWidth - 1, startingPosition.y - mazeDepth + 1, startingPosition.z + 0.8f);
+        finishPos = new Vector3(startingPosition.x + mazeWidth - 0.8f, startingPosition.y - mazeDepth + 1, startingPosition.z + 0.8f);
         maze =  mazeWidth + "\n" + mazeDepth + "\n";
         Debug.Log("Maze is Being created");
         mazeGrid = new MazeCell[mazeWidth, mazeDepth];
@@ -64,6 +64,8 @@ public class MazeGenerator : MonoBehaviour
             for (int j = 0; j < mazeDepth; j++)
             {
                 mazeGrid[i,j] = Instantiate(mazeCellPrefab, new Vector3(startingPosition.x + i, startingPosition.y - j, startingPosition.z), Quaternion.identity);
+                mazeGrid[i,j].x = i;
+                mazeGrid[i,j].y = j;
             }
         }
         GenerateMaze(null, mazeGrid[0,0]);
@@ -305,6 +307,41 @@ public class MazeGenerator : MonoBehaviour
         currentCell.Visit();
         ClearWall(previousCell, currentCell);
         new WaitForSeconds(0.05f);
+    }
+
+    public MazeCell[,] getMazeGrid(){
+        return this.mazeGrid;
+    }
+    public int getMazeWidth()
+    {
+        return this.mazeWidth;
+    }
+    public int getMazeDepth()
+    {
+        return this.mazeDepth;  
+    }
+
+    public List<MazeCell> GetAccessibleNeighbors(MazeCell currentCell)
+    {
+         List<MazeCell> neighbors = new List<MazeCell>();
+
+        if (currentCell.x - 1 >= 0 && !currentCell.HasLeftWall())
+            neighbors.Add(mazeGrid[currentCell.x - 1, currentCell.y]);
+
+        if (currentCell.x + 1 < mazeWidth && !currentCell.HasRightWall())
+            neighbors.Add(mazeGrid[currentCell.x + 1, currentCell.y]);
+
+        if (currentCell.y + 1 < mazeDepth && !currentCell.HasFrontWall())
+            neighbors.Add(mazeGrid[currentCell.x, currentCell.y + 1]);
+
+        if (currentCell.y - 1 >= 0 && !currentCell.HasBackWall())
+            neighbors.Add(mazeGrid[currentCell.x, currentCell.y - 1]);
+
+        foreach (var neighbor in neighbors)
+        {
+            Debug.Log($"Accessible neighbor: {neighbor.x}, {neighbor.y}");
+        }
+        return neighbors;
     }
 
     // Update is called once per frame

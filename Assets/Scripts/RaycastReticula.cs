@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +11,10 @@ public class RaycastReticula : MonoBehaviour
     public GameObject reticula;
     private float amount = 3;
     private float timer = 0;
+    private List<MazeCell> visitedCells = new List<MazeCell>();
+    public GameObject enemy;
+    public bool startPlaying = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +24,7 @@ public class RaycastReticula : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        
         RaycastHit hit;
         if(Physics.Raycast(transform.position, transform.forward, out hit, 100))
         {
@@ -27,6 +34,18 @@ public class RaycastReticula : MonoBehaviour
             {
                 reticula.gameObject.SetActive(true);
                 ReticulaAdaptation(hit.distance, hit.normal);
+
+                //Guardar las celdas que visita el jugador
+                //var mazeCell = hit.transform.GetComponent<MazeCell>();
+                MazeCell mazeCell = hit.transform.GetComponentInParent<MazeCell>();
+                if(mazeCell.x == 0 && mazeCell.y == 0){
+                    startPlaying = true;
+                }
+                if (mazeCell != null && !mazeCell.visitedByPlayer && startPlaying)
+                {
+                    mazeCell.MarkAsVisited();
+                    visitedCells.Add(mazeCell); 
+                }
 
             }else{
                 if(hit.transform.gameObject.tag == "Wall")
@@ -68,5 +87,12 @@ public class RaycastReticula : MonoBehaviour
         //rotar el objeto de manera que se quede mirando a una direccion, que es la superficie
         Vector3 offset = new Vector3(0,90,0);
         reticula.transform.rotation = Quaternion.LookRotation(normal + offset);
+    }
+    public List<MazeCell> GetVisitedCells()
+    {
+        return visitedCells;
+    }
+    public void ClearVisitedCells(){
+        visitedCells.Clear();
     }
 }

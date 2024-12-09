@@ -13,6 +13,9 @@ TagManager:
   - Manager
   - Left Hand
   - Right Hand
+  - Enemy
+  - Speed
+  - Timer
   layers:
   - Default
   - TransparentFX
