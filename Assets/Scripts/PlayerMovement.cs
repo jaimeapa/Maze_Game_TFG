@@ -43,7 +43,13 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogError("Error finding timer: " + e.Message);
         }
-        
+        if(spawnManager == null){
+            spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        }
+        if(menu == null)
+        {
+            menu = GameObject.Find("DifficultySelection");
+        }
     }
 
     // Update is called once per frame
@@ -76,8 +82,9 @@ public class PlayerMovement : MonoBehaviour
         {
             startingPos = new Vector3(startingPos.x - 1, startingPos.y + 2, startingPos.z);
         }
-
+        
         StartCoroutine(StartGameCoroutine());
+        
     }
 
     private IEnumerator StartGameCoroutine()

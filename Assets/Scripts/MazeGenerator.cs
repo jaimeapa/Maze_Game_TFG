@@ -70,12 +70,12 @@ public class MazeGenerator : MonoBehaviour
         }
         GenerateMaze(null, mazeGrid[0,0]);
         Instantiate(finishLine, finishPos, finishLine.transform.rotation);
-        String fileName = DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
+        /*String fileName = DateTime.Now.ToString("yyyy-MM-dd-hh-mm");
 
         string fullPath = Application.dataPath + "/MazesSaved/" + fileName + ".txt";
         Debug.Log(fullPath);
         File.WriteAllText(fullPath, maze);
-        maze = "";
+        maze = "";*/
     }
 
     private void GenerateMaze(MazeCell previousCell, MazeCell currentCell)

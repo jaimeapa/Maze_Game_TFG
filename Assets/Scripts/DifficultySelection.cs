@@ -15,6 +15,12 @@ public class DifficultySelection : MonoBehaviour
         button = GetComponent<Button>();
         button.onClick.AddListener(SetDifficulty);
         mazeGenerator = GameObject.Find("MazeGenerator").GetComponent<MazeGenerator>();
+        if(playerMovement == null){
+            playerMovement = GameObject.FindWithTag("Manager").GetComponent<PlayerMovement>();
+        }
+        
+        
+
     }
 
     // Update is called once per frame
