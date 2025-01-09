@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
@@ -24,12 +25,19 @@ public class PlayerMovement : MonoBehaviour
     public SpawnManager spawnManager;
     //public Movement movement;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI time;
+    public TextMeshProUGUI data;
+    public TextMeshProUGUI error;
     public MazeGenerator mazeGenerator;
     public GameObject enemy;
     public RaycastReticula raycastReticula; 
     public bool playEnemy = false;
     public float enemySpeed;
     public Timer timer;
+    public bool showTime = false;
+    public Stopwatch stopwatch;
+    public int timeTaken;
+    public Report report;
 
     // Start is called before the first frame update
     void Start()
@@ -55,15 +63,14 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*if(restartButton == null)
-        {
-            restartButton = GameObject.Find("RestartButton");
-        }*/
-        
         if (restart)
         {
             isPlaying = true;
             restartButton.gameObject.SetActive(true);
+        }
+        if(showTime)
+        {
+            time.text = "Time: " + stopwatch.getActualTime();
         }
     }
 
@@ -84,7 +91,6 @@ public class PlayerMovement : MonoBehaviour
         }
         
         StartCoroutine(StartGameCoroutine());
-        
     }
 
     private IEnumerator StartGameCoroutine()
@@ -95,6 +101,11 @@ public class PlayerMovement : MonoBehaviour
         raycastReticula.ClearVisitedCells();
         raycastReticula.startPlaying = false;
         scoreText.gameObject.SetActive(true);
+        stopwatch.Start();
+        if(showTime)
+        {
+            time.gameObject.SetActive(true);
+        }
         
         if(playEnemy){
             Debug.Log("Iniciar Temporizador...");
@@ -113,7 +124,6 @@ public class PlayerMovement : MonoBehaviour
     {
         restart = false;
         restartButton.gameObject.SetActive(false);
-        mazeGenerator.DestroyMaze();
         menu.gameObject.SetActive(true);
         wallCounter =  0;
         scoreText.text = "Score: " + wallCounter;
@@ -127,8 +137,17 @@ public class PlayerMovement : MonoBehaviour
 
     public void Restart()
     {
+        timeTaken = stopwatch.Stop();
+        Debug.Log(timeTaken);
+        scoreText.gameObject.SetActive(false);
+        time.gameObject.SetActive(false);
+        int wallsHit = (int)wallCounter/2;
+        report.setTime(timeTaken);
+        report.setWalls(wallsHit);
+        data.text = "Time: " + timeTaken + "s\nWall Hits: " + wallsHit;  
         Debug.Log("Restart Button appearing...");
         isPlaying = true;
+        mazeGenerator.DestroyMaze();
         restartButton.gameObject.SetActive(true);
     }
 

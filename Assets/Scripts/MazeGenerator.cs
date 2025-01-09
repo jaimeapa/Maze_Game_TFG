@@ -27,6 +27,7 @@ public class MazeGenerator : MonoBehaviour
     public int mazeNumber = 0;
     public int mazeShape = 0;
     public int difficulty;
+    public Report report;
     // Start is called before the first frame update
     void Start()
     {
@@ -76,6 +77,8 @@ public class MazeGenerator : MonoBehaviour
         Debug.Log(fullPath);
         File.WriteAllText(fullPath, maze);
         maze = "";*/
+        report.setMaze(maze);
+        report.WriteToFile(DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss"), maze);
     }
 
     private void GenerateMaze(MazeCell previousCell, MazeCell currentCell)
@@ -249,12 +252,37 @@ public class MazeGenerator : MonoBehaviour
         Debug.Log("Maze Destroyed");
     }
 
-    public void CreateMazeFromFile(string Path)
+    public int CreateMazeFromFile(string filename)
     {
-        string mazefromFile = File.ReadAllText(Path);
+        string mazefromFile = report.ReadFromFile(filename);
+        if(mazefromFile == null){
+            return -1;
+        }
         string[ ] linesInFile = mazefromFile.Split("\n");
         int.TryParse(linesInFile[0], out mazeWidth);
         int.TryParse(linesInFile[1], out mazeDepth);
+
+        if(mazeWidth == 6){
+            difficulty = 0;
+        }else if(mazeWidth == 8){
+            difficulty = 1;
+        }else{
+            difficulty = 2;
+        }
+        if(difficulty == 0)
+        {
+            startingPosition = new Vector3(28f,7f,17f);
+        }else{
+            if(difficulty == 2)
+            {
+                startingPosition = new Vector3(startingPosition.x - 1, startingPosition.y + 2, startingPosition.z);
+            }else 
+            {
+                startingPosition = new Vector3(26.5f, 8.16f,20.64f);
+            }
+        }
+        finishPos = new Vector3(startingPosition.x + mazeWidth - 0.8f, startingPosition.y - mazeDepth + 1, startingPosition.z + 0.8f);
+
         int[] xcoordenates = new int[linesInFile.Length - 2];
         int[] ycoordenates = new int[linesInFile.Length - 2];
         int length = xcoordenates.Length;
@@ -263,9 +291,6 @@ public class MazeGenerator : MonoBehaviour
             string line = linesInFile[i];
             if (!string.IsNullOrWhiteSpace(line))
             {
-                //string trimmedLine = line.Trim(new char[] { '[', ']', ' ', '\r' });
-
-                // Dividir en las coordenadas x e y
                 string[] partes = line.Split(',');
 
                 if (partes.Length == 2 && int.TryParse(partes[0], out int x) &&int.TryParse(partes[1], out int y))
@@ -294,7 +319,8 @@ public class MazeGenerator : MonoBehaviour
         Debug.Log(xcoordenates[length-2] + ", "+ ycoordenates[length-2] + "\n" + xcoordenates[length-1] + "," + ycoordenates[length-1]);
         GenerateMaze(mazeGrid[xcoordenates[length-2], ycoordenates[length-2]], mazeGrid[xcoordenates[length-1], ycoordenates[length-1]]);
         //GenerateMaze(null, mazeGrid[0,0]);
-        Instantiate(finishLine);
+        Instantiate(finishLine, finishPos, finishLine.transform.rotation);
+        return difficulty;
     }
     public void GenerateMazeFromFile(int x1, int y1, int x2, int y2)
     {
