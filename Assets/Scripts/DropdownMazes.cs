@@ -22,9 +22,8 @@ public class DropdownMazes : MonoBehaviour
     }
     void OnDropdownValueChanged(int index)
     {
-        //string opcionSeleccionada = dropdownTMP.options[index].text;
+        string opcionSeleccionada = dropdownTMP.options[index].text;
         TMP_Text selectedTextComponent = dropdownTMP.captionText;
-        string opcionSeleccionada = selectedTextComponent.text;
         Debug.Log(opcionSeleccionada);
         play.SetFileName(opcionSeleccionada);
     }
