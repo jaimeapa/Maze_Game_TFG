@@ -60,8 +60,8 @@ public class RaycastReticula : MonoBehaviour
         }
         else
         {
-            timer = 0; 
-            //corona.SetActive(false);
+            timer = 0;
+            reticula.gameObject.SetActive(false);
             ReticulaAdaptation(20, -transform.forward);
         }
         /*Vector3 fwd = transform.TransformDirection(Vector3.forward);

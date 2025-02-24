@@ -57,6 +57,12 @@ using UnityEngine;
             //transform.position = Vector3.MoveTowards(transform.position, currentTarget, speed * Time.deltaTime);
             Vector3 newPosition = Vector3.MoveTowards(enemyRb.position, currentTarget, speed * Time.fixedDeltaTime);
             enemyRb.MovePosition(newPosition);
+            if(position > 0)
+            {
+                Quaternion targetRotation = Quaternion.Euler(GetNextRotation(visitedCells[position-1], visitedCells[position]), 90, - 90);
+                enemyRb.MoveRotation(targetRotation);
+            }
+            
 
             if (Vector3.Distance(transform.position, currentTarget) < 0.1f)
             {
@@ -65,6 +71,28 @@ using UnityEngine;
             }
         }
         
+    }
+    public int GetNextRotation(MazeCell previousCell, MazeCell nextCell)
+    {
+        int rotation = 0;
+        if (previousCell.x < nextCell.x)
+        {
+            rotation = 0;
+        }
+        if(previousCell.y < nextCell.y)
+        {
+            rotation = 90;
+        }
+        if (previousCell.x > nextCell.x)
+        {
+            rotation = 180;
+        }
+        if (previousCell.y > nextCell.y)
+        {
+            rotation = 270;
+        }
+
+        return rotation;
     }
 
 }

@@ -14,6 +14,8 @@ public class Movement : MonoBehaviour
     public RaycastReticula raycastReticula; 
     public GameObject enemy;
     private bool enemyFound = false;
+    public float actionRad = 2.5f;
+    public float rotationSpeed = 1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,7 +37,7 @@ public class Movement : MonoBehaviour
         if(reticula == null)
         {
             try{
-                reticula = GameObject.Find("Reticula");
+                reticula = GameObject.FindWithTag("Reticula");
             }catch(NullReferenceException e){
                 Debug.Log("No se encuentra retícula"+ e.Message);
             }
@@ -57,27 +59,89 @@ public class Movement : MonoBehaviour
                 Debug.LogError("Error finding enemy: " + e.Message);
             }
         }
-        /*Vector3 direction = (reticula.transform.position - playerRb.transform.position).normalized;
-        float x = direction.x;
-        float y = direction.y;
-        float distance = Vector3.Distance(transform.position, reticula.transform.position);
-        if(distance <= 2.5){
-            playerRb.AddForce(new Vector2(x,y) * speed);
-        }*/
+
+
         if (reticula != null && raycastReticula.startPlaying)
+        {
+
+            Vector3 direction = (reticula.transform.position - playerRb.transform.position).normalized;
+            float angleX = Mathf.Atan2(-direction.y, direction.x) * Mathf.Rad2Deg;
+
+
+            float distance = Vector3.Distance(playerRb.transform.position, reticula.transform.position);
+            if(playerMovement.actionRad != null)
+            {
+                float actionRad = playerMovement.actionRad;
+            }
+            else
+            {
+                actionRad = 2.5f;
+            }
+            
+
+            if (distance > 0.1f && distance <= actionRad)
+            {
+                // Aplicar la rotación en el eje Z del mundo
+                Quaternion targetRotation = Quaternion.Euler(angleX, playerRb.transform.rotation.y + 90, playerRb.transform.rotation.z - 90);
+
+                playerRb.MoveRotation(targetRotation);
+
+                // Mover el personaje en la dirección correcta (evita que se mueva en Y si no queremos flotación)
+                float startPos = playerMovement.startingPos.z;
+                playerRb.velocity = new Vector3(direction.x, direction.y, startPos) * speed;
+            }
+            else
+            {
+                playerRb.velocity = Vector3.zero;
+            }
+        }
+
+
+        /*if (reticula != null && raycastReticula.startPlaying)
+        {
+            Vector3 direction = (reticula.transform.position - playerRb.transform.position).normalized;
+
+            float angleX = Mathf.Atan2(-direction.y, direction.x) * Mathf.Rad2Deg;
+
+            //playerRb.transform.rotation = targetRotation;
+            float distance = Vector3.Distance(playerRb.transform.position, reticula.transform.position);
+            actionRad = playerMovement.actionRad;
+            if (distance > 0.1f && distance <= actionRad)
+            {
+                Quaternion targetRotation = Quaternion.Euler(angleX, playerRb.transform.rotation.eulerAngles.y, playerRb.transform.rotation.eulerAngles.z);
+                playerRb.MoveRotation(targetRotation);
+                playerRb.velocity = direction * speed;
+            }
+            else
+            {
+                playerRb.velocity = Vector3.zero;
+            }
+        }*/
+        /*if (reticula != null && raycastReticula.startPlaying)
         {
             Vector3 direction = (reticula.transform.position - playerRb.transform.position).normalized;
             float distance = Vector3.Distance(playerRb.transform.position, reticula.transform.position);
 
-            if (distance > 0.1f && distance <= 2.5f) 
+            actionRad = playerMovement.actionRad;
+            if (distance > 0.1f && distance <= actionRad)
             {
                 playerRb.velocity = direction * speed;
-            }else{
-                 playerRb.velocity = Vector3.zero;
+
+            // Asegurarse de que el objeto gire hacia la dirección del movimiento
+                if (direction != Vector3.zero) // Evitar errores con un vector de dirección cero
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction);
+                    playerRb.transform.rotation = Quaternion.Slerp(playerRb.transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+                }
             }
+            else
+            {
+                playerRb.velocity = Vector3.zero;
+            }
+        }*/
     }
-        
-    }
+
+
     private void OnCollisionEnter(Collision collision)
     {
         

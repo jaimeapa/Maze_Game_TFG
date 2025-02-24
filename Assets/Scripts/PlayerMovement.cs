@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     public float wallCounter = 0;
     //public Button button;
     public GameObject menu;
-    public Vector3 startingPos = new Vector3(26.5f, 8.16f, 21.19f);
+    public Vector3 startingPos = new Vector3(26.5f, 8.16f, 21f);
     public GameObject restartButton;
     public GameObject playerPrefab;
     public SpawnManager spawnManager;
@@ -28,6 +28,9 @@ public class PlayerMovement : MonoBehaviour
     public TextMeshProUGUI time;
     public TextMeshProUGUI data;
     public TextMeshProUGUI error;
+    public TextMeshProUGUI start;
+    public TextMeshProUGUI instructions;
+    private bool startPlaying = false;
     public MazeGenerator mazeGenerator;
     public GameObject enemy;
     public RaycastReticula raycastReticula; 
@@ -38,12 +41,14 @@ public class PlayerMovement : MonoBehaviour
     public Stopwatch stopwatch;
     public int timeTaken;
     public Report report;
+    public float actionRad;
 
     // Start is called before the first frame update
     void Start()
     {
         reticula = GameObject.Find("Reticula");
         raycastReticula = GameObject.Find("Main Camera").GetComponent<RaycastReticula>();
+        enemySpeed = 0.5f;
         try{
             timer = GameObject.Find("Timer").GetComponent<Timer>();
             timer.gameObject.SetActive(false);
@@ -72,18 +77,33 @@ public class PlayerMovement : MonoBehaviour
         {
             time.text = "Time: " + stopwatch.getActualTime();
         }
+        if(raycastReticula.startPlaying && !startPlaying)
+        {
+            startPlaying = true;
+            StartCoroutine(StartPlaying());
+        }
+        if (raycastReticula.startPlaying)
+        {
+            instructions.gameObject.SetActive(false);
+        }
     }
 
-    
+    public IEnumerator StartPlaying()
+    {
+        start.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2);
+        
+        start.gameObject.SetActive(false);  
+    }
     
     public void StartGame(int difficulty)
     {
         if(difficulty == 0){
-            startingPos = new Vector3(28f, 7f, 17.7f);
+            startingPos = new Vector3(28f, 7f, 17.5f);
         }
         if(difficulty == 1)
         {
-            startingPos = new Vector3(26.5f, 8.16f, 21.19f);
+            startingPos = new Vector3(26.5f, 8.16f, 21f);
         }
         if(difficulty == 2)
         {
@@ -95,6 +115,8 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator StartGameCoroutine()
     {
+        instructions.gameObject.SetActive(true);
+        instructions.text = "Look at the character to start";
         // Instancia el jugador
         spawnManager.SpawnPlayer(startingPos);
         menu.gameObject.SetActive(false);
