@@ -107,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if(difficulty == 2)
         {
-            startingPos = new Vector3(startingPos.x - 1, startingPos.y + 2, startingPos.z);
+            startingPos = new Vector3(25.5f, 11f, 21f);
         }
         
         StartCoroutine(StartGameCoroutine());

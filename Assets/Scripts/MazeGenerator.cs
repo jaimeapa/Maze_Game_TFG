@@ -47,7 +47,7 @@ public class MazeGenerator : MonoBehaviour
             {
                 mazeDepth = 10;
                 mazeWidth = 10;
-                startingPosition = new Vector3(startingPosition.x - 1, startingPosition.y + 2, startingPosition.z);
+                startingPosition = new Vector3(25.5f, 11f, 20.64f);
             }else 
             {
                 mazeDepth = 8;
@@ -55,7 +55,7 @@ public class MazeGenerator : MonoBehaviour
                 startingPosition = new Vector3(26.5f, 8.16f,20.64f);
             }
         }
-        finishPos = new Vector3(startingPosition.x + mazeWidth - 0.8f, startingPosition.y - mazeDepth + 1, startingPosition.z + 0.8f);
+        finishPos = new Vector3(startingPosition.x + mazeWidth - 0.8f, startingPosition.y - mazeDepth + 1, startingPosition.z + 0.9f);
         maze =  mazeWidth + "\n" + mazeDepth + "\n";
         Debug.Log("Maze is Being created");
         mazeGrid = new MazeCell[mazeWidth, mazeDepth];
