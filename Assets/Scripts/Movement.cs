@@ -16,6 +16,7 @@ public class Movement : MonoBehaviour
     private bool enemyFound = false;
     public float actionRad = 2.5f;
     public float rotationSpeed = 1f;
+    public Transform playerTransform;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +30,7 @@ public class Movement : MonoBehaviour
         speed = 1.5f;   
         playerMovement = GameObject.Find("Manager").GetComponent<PlayerMovement>();
         raycastReticula = GameObject.Find("Main Camera").GetComponent<RaycastReticula>();
+        playerTransform = playerRb.transform;
     }
 
     // Update is called once per frame
@@ -78,20 +80,21 @@ public class Movement : MonoBehaviour
                 actionRad = 2.5f;
             }
             
-
+            // Aplicar la rotación en el eje Z del mundo
+            Quaternion targetRotation = Quaternion.Euler(angleX, playerRb.transform.rotation.y + 90, playerRb.transform.rotation.z - 90);
+            float startPos = playerMovement.startingPos.z;
+            playerRb.MoveRotation(targetRotation);
             if (distance > 0.1f && distance <= actionRad)
             {
-                // Aplicar la rotación en el eje Z del mundo
-                Quaternion targetRotation = Quaternion.Euler(angleX, playerRb.transform.rotation.y + 90, playerRb.transform.rotation.z - 90);
-
-                playerRb.MoveRotation(targetRotation);
+                
 
                 // Mover el personaje en la dirección correcta (evita que se mueva en Y si no queremos flotación)
-                float startPos = playerMovement.startingPos.z;
+                
                 playerRb.velocity = new Vector3(direction.x, direction.y, startPos) * speed;
             }
             else
             {
+                playerRb.velocity = new Vector3(playerRb.transform.position.x, playerRb.transform.position.y, startPos) * speed;
                 playerRb.velocity = Vector3.zero;
             }
         }
