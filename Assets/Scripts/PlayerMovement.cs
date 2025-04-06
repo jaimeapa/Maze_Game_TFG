@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     public int timeTaken;
     public Report report;
     public float actionRad;
+    public int timeWallHit;
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
         reticula = GameObject.Find("Reticula");
         raycastReticula = GameObject.Find("Main Camera").GetComponent<RaycastReticula>();
         enemySpeed = 0.5f;
+        timeWallHit = 0;
         try{
             timer = GameObject.Find("Timer").GetComponent<Timer>();
             timer.gameObject.SetActive(false);
@@ -75,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if(showTime)
         {
-            time.text = "Time: " + stopwatch.getActualTime();
+            time.text = "Time: " + stopwatch.getActualTime(0);
         }
         if(raycastReticula.startPlaying && !startPlaying)
         {
@@ -123,7 +125,7 @@ public class PlayerMovement : MonoBehaviour
         raycastReticula.ClearVisitedCells();
         raycastReticula.startPlaying = false;
         scoreText.gameObject.SetActive(true);
-        stopwatch.Start();
+        stopwatch.StartStopwatch(0);
         if(showTime)
         {
             time.gameObject.SetActive(true);
@@ -159,14 +161,14 @@ public class PlayerMovement : MonoBehaviour
 
     public void Restart()
     {
-        timeTaken = stopwatch.Stop();
+        timeTaken = stopwatch.Stop(0);
         Debug.Log(timeTaken);
         scoreText.gameObject.SetActive(false);
         time.gameObject.SetActive(false);
         int wallsHit = (int)wallCounter/2;
         report.setTime(timeTaken);
         report.setWalls(wallsHit);
-        data.text = "Time: " + timeTaken + "s\nWall Hits: " + wallsHit;  
+        data.text = "Time: " + timeTaken/1000 + "s\nWall Hits: " + wallsHit + " hits\nTime hitting a wall: " + timeWallHit/1000 + " s";  
         Debug.Log("Restart Button appearing...");
         isPlaying = true;
         mazeGenerator.DestroyMaze();
@@ -183,6 +185,10 @@ public class PlayerMovement : MonoBehaviour
     public float GetEnemySpeed()
     {
         return enemySpeed;
+    }
+    public void SetWallTime(int time)
+    {
+        timeWallHit = time;
     }
    
 }

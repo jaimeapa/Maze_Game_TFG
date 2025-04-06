@@ -6,21 +6,21 @@ public class Stopwatch : MonoBehaviour
 {
     private float startTime; // Almacena el tiempo en que se inicia el cronómetro.
     private bool activeStopwatch = false; // Controla si el cronómetro está activo.
-    private int time = 0; // Tiempo transcurrido en segundos como entero.
+    private int [] time = new int[5]; // Tiempo transcurrido en segundos como entero.
 
     // Función para iniciar el cronómetro.
-    public void Start()
+    public void StartStopwatch(int i)
     {
         startTime = Time.time; 
         activeStopwatch = true;
-        time = 0; 
+        time[i] = 0; 
     }
 
-    public int Stop()
+    public int Stop(int i)
     {
         if (activeStopwatch)
         {
-            time = Mathf.FloorToInt(Time.time - startTime); 
+            time[i] = Mathf.FloorToInt((Time.time - startTime) * 1000); 
             activeStopwatch = false;
         }
         else
@@ -28,16 +28,16 @@ public class Stopwatch : MonoBehaviour
             Debug.LogWarning("Stopwatch is not active");
         }
 
-        return time;
+        return time[i];
     }
 
-    public int getActualTime()
+    public int getActualTime(int i)
     {
         if (activeStopwatch)
         {
             return Mathf.FloorToInt(Time.time - startTime);
         }
 
-        return time; 
+        return time[i]; 
     }
 }

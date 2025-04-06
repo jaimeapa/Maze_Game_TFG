@@ -17,6 +17,10 @@ public class Movement : MonoBehaviour
     public float actionRad = 2.5f;
     public float rotationSpeed = 1f;
     public Transform playerTransform;
+    public Stopwatch stopwatch;
+    public int timeWallHit;
+    public bool inMaze;
+    private Quaternion targetRotation;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +34,9 @@ public class Movement : MonoBehaviour
         speed = 1.5f;   
         playerMovement = GameObject.Find("Manager").GetComponent<PlayerMovement>();
         raycastReticula = GameObject.Find("Main Camera").GetComponent<RaycastReticula>();
+        stopwatch = GameObject.Find("Stopwatch").GetComponent<Stopwatch>();
         playerTransform = playerRb.transform;
+        timeWallHit = 0;
     }
 
     // Update is called once per frame
@@ -66,9 +72,7 @@ public class Movement : MonoBehaviour
         if (reticula != null && raycastReticula.startPlaying)
         {
 
-            Vector3 direction = (reticula.transform.position - playerRb.transform.position).normalized;
-            float angleX = Mathf.Atan2(-direction.y, direction.x) * Mathf.Rad2Deg;
-
+            float startPos = playerMovement.startingPos.z;
 
             float distance = Vector3.Distance(playerRb.transform.position, reticula.transform.position);
             if(playerMovement.actionRad != null)
@@ -81,21 +85,25 @@ public class Movement : MonoBehaviour
             }
             
             // Aplicar la rotación en el eje Z del mundo
-            Quaternion targetRotation = Quaternion.Euler(angleX, playerRb.transform.rotation.y + 90, playerRb.transform.rotation.z - 90);
-            float startPos = playerMovement.startingPos.z;
-            playerRb.MoveRotation(targetRotation);
-            if (distance > 0.1f && distance <= actionRad)
+            
+            if (distance > 0.1f && distance <= actionRad && inMaze)
             {
+
+                Vector3 direction = (reticula.transform.position - playerRb.transform.position).normalized;
+                float angleX = Mathf.Atan2(-direction.y, direction.x) * Mathf.Rad2Deg;
+                targetRotation = Quaternion.Euler(angleX, playerRb.transform.rotation.y + 90, playerRb.transform.rotation.z - 90);
                 
+                playerRb.MoveRotation(targetRotation);
 
                 // Mover el personaje en la dirección correcta (evita que se mueva en Y si no queremos flotación)
-                
+
                 playerRb.velocity = new Vector3(direction.x, direction.y, startPos) * speed;
             }
             else
             {
                 playerRb.velocity = new Vector3(playerRb.transform.position.x, playerRb.transform.position.y, startPos) * speed;
                 playerRb.velocity = Vector3.zero;
+                playerRb.MoveRotation(targetRotation);
             }
         }
 
@@ -147,18 +155,33 @@ public class Movement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if(collision.gameObject.CompareTag("Maze Floor") || collision.gameObject.CompareTag("Wall"))
+        {
+            inMaze = true;
+        }
+        else
+        {
+            inMaze = false;
+        }
         
-        if(collision.gameObject.CompareTag("Wall"))
+        if(collision.gameObject.CompareTag("Wall") && raycastReticula.startPlaying)
         {
             playerMovement.UpdateScore();
+            stopwatch.StartStopwatch(1);
         }
-        if(collision.gameObject.CompareTag("Enemy"))
+        else
         {
-            Destroy(gameObject);
-            Destroy(collision.gameObject);
-            Debug.Log("You got caught!");
-            playerMovement.Restart();
+            timeWallHit = timeWallHit + stopwatch.Stop(1);
+            playerMovement.SetWallTime(timeWallHit);
+            if(collision.gameObject.CompareTag("Enemy"))
+            {
+                Destroy(gameObject);
+                Destroy(collision.gameObject);
+                Debug.Log("You got caught!");
+                playerMovement.Restart();
+            }
         }
+        
     }
     private void OnTriggerEnter(Collider collision)
     {
