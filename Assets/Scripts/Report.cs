@@ -13,6 +13,7 @@ public class Report : MonoBehaviour
 {
     public int time;
     public int walls;
+    public int timeAtWall;
     public String maze;
     public DateTime date;
 
@@ -67,7 +68,7 @@ public class Report : MonoBehaviour
     }
 
     public void WriteReportInFile(string filename, string date){
-        string data = "Report day " + date + "\nTime taken: " + time + "\nWalls Hit: " + walls + "\nMaze: " + maze;
+        string data = "Report day " + date + "\nTime taken: " + time + "\nWalls Hit: " + walls + "\n Time spent touching walls: " + timeAtWall + "\nMaze: " + maze;
         WriteToFile(filename, data);
     }
     public string ReadFromFile(string filename)
@@ -110,5 +111,12 @@ public class Report : MonoBehaviour
     public void setDate (DateTime date)
     {
         this.date = date;
+    }
+    public void setData(String maze, int walls, int time, int timeAtWalls)
+    {
+        this.maze = maze;
+        this.walls = walls;
+        this.time = time;
+        this.timeAtWall = timeAtWalls;
     }
 }

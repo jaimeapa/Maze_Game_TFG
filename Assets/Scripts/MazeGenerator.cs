@@ -47,7 +47,7 @@ public class MazeGenerator : MonoBehaviour
             {
                 mazeDepth = 10;
                 mazeWidth = 10;
-                startingPosition = new Vector3(25.5f, 11f, 20.64f);
+                startingPosition = new Vector3(25.5f, 9f, 20.64f);
             }else 
             {
                 mazeDepth = 8;
@@ -345,6 +345,10 @@ public class MazeGenerator : MonoBehaviour
     public int getMazeDepth()
     {
         return this.mazeDepth;  
+    }
+    public String getMaze()
+    {
+        return this.maze;
     }
 
     public List<MazeCell> GetAccessibleNeighbors(MazeCell currentCell)

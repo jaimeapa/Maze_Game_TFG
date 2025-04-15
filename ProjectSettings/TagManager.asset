@@ -16,6 +16,9 @@ TagManager:
   - Enemy
   - Speed
   - Timer
+  - Stopwatch
+  - Message
+  - PathFinder
   layers:
   - Default
   - TransparentFX

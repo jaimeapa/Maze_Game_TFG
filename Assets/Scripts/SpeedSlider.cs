@@ -17,7 +17,7 @@ public class SpeedSlider : MonoBehaviour
     public void OnSliderChange (float value){
         playerMovement = GameObject.Find("Manager").GetComponent<PlayerMovement>();
         //speed = value;
-        float myFloat = (float)(10 *value/1.5);
+        float myFloat = (float)(10 *value/2);
         string formattedFloat = myFloat.ToString("F2");
         text = "Speed: " + formattedFloat;
         textUI.text = text;

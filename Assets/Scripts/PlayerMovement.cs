@@ -43,6 +43,8 @@ public class PlayerMovement : MonoBehaviour
     public Report report;
     public float actionRad;
     public int timeWallHit;
+    public String maze;
+    public int mazes = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -109,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if(difficulty == 2)
         {
-            startingPos = new Vector3(25.5f, 11f, 21f);
+            startingPos = new Vector3(25.5f, 9f, 21f);
         }
         
         StartCoroutine(StartGameCoroutine());
@@ -168,7 +170,10 @@ public class PlayerMovement : MonoBehaviour
         int wallsHit = (int)wallCounter/2;
         report.setTime(timeTaken);
         report.setWalls(wallsHit);
-        data.text = "Time: " + timeTaken/1000 + "s\nWall Hits: " + wallsHit + " hits\nTime hitting a wall: " + timeWallHit/1000 + " s";  
+        data.text = "Time: " + timeTaken/1000 + "s\nWall Hits: " + wallsHit + " hits\nTime hitting a wall: " + timeWallHit/1000 + " s";
+        maze = mazeGenerator.getMaze();
+        report.setData(maze, wallsHit, timeTaken / 1000, timeWallHit / 1000);
+        report.WriteReportInFile("/Results/" + DateTime.Now.ToString("yyyy-MM-dd-hh") + mazes, DateTime.Now.ToString("yyyy-MM-dd"));
         Debug.Log("Restart Button appearing...");
         isPlaying = true;
         mazeGenerator.DestroyMaze();
