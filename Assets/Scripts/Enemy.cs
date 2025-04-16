@@ -39,7 +39,7 @@ using UnityEngine;
         position = 0;
         //speed = 1f;
         speed = 0;
-        List<MazeCell> visitedCells = new List<MazeCell>();
+        //List<MazeCell> visitedCells = new List<MazeCell>();
     }
 
 
@@ -68,13 +68,12 @@ using UnityEngine;
         }
         if(position < visitedCells.Count){
             cell = visitedCells[position];
-
+            
+            
             if (position > 0 && isBlockedByWall(visitedCells[position - 1], visitedCells[position]))
             {
                 visitedCells.RemoveAt(position);
             }
-            
-            
             
             currentTarget = new Vector3(cell.x + startingPosition.x + 0.2f, startingPosition.y - cell.y, startingPosition.z);
             Vector3 newPosition = Vector3.MoveTowards(enemyRb.position, currentTarget, speed * Time.fixedDeltaTime);
@@ -87,15 +86,15 @@ using UnityEngine;
                 Quaternion targetRotation = Quaternion.Euler(GetNextRotation(visitedCells[position-1], visitedCells[position]), 90, - 90);
                 enemyRb.MoveRotation(targetRotation);
             }
-            message.text = "Position: " + (int)(transform.position.x - startingPosition.x) + ","+ (int)(startingPosition.y - transform.position.y) + "\nCount: " + visitedCells.Count + "\nNext Cell: " + cell.x + "," + cell.y;
-            message.text += "\nSpeed: " + speed;
+            //message.text = "Position: " + (int)(transform.position.x - startingPosition.x) + ","+ (int)(startingPosition.y - transform.position.y) + "\nCount: " + visitedCells.Count + "\nNext Cell: " + cell.x + "," + cell.y;
+            //message.text += "\nSpeed: " + speed;
             //if (Vector3.Distance(transform.position, currentTarget) < 0.1f)
             Vector2 currentPosition = new Vector2(transform.position.x, transform.position.y);
             Vector2 targetPosition = new Vector2(currentTarget.x, currentTarget.y);
 
             if (Vector2.Distance(currentPosition, targetPosition) < 0.1f)
             {
-                message.text += "\nPosition++ ";
+                //message.text += "\nPosition++ ";
                 position++;
                 //Debug.Log("Moving"); // Pasar al siguiente objetivo
             }
@@ -103,7 +102,7 @@ using UnityEngine;
             {
                 stuck = true;
             }*/
-            message.text += "\nLoop ended";
+            //message.text += "\nLoop ended";
             
         }
         
@@ -113,33 +112,32 @@ using UnityEngine;
 
     private bool isBlockedByWall(MazeCell previousCell, MazeCell nextCell)
     {
-        bool answer = false;
         if(previousCell.x < nextCell.x)
         {
             if (previousCell.HasRightWall())
             {
-                answer =  true;
+                return true;
             }
         }
         if (previousCell.x > nextCell.x)
         {
             if (previousCell.HasLeftWall())
             {
-                answer =  true;
+                return true;
             }
         }
         if (previousCell.y < nextCell.y)
         {
             if (previousCell.HasBackWall())
             {
-                answer =  true;
+                return true;
             }
         }
         if (previousCell.y > nextCell.y)
         {
             if (previousCell.HasFrontWall())
             {
-                answer =  true;
+                return true;
             }
         }
         return false;
