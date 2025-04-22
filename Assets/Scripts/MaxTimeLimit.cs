@@ -6,20 +6,19 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
-public class ActionRadious : MonoBehaviour
+public class MaxTimeLimit : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI textUI;
     private String text;
     private PlayerMovement playerMovement;
 
-   
-    public void OnSliderChange (float value){
+
+    public void OnSliderChange (float value)
+    {
         playerMovement = GameObject.Find("Manager").GetComponent<PlayerMovement>();
-        //speed = value;
-        float myFloat = (float)(10 *value/5);
-        string formattedFloat = myFloat.ToString("F2");
-        text = "Action Radious: " + formattedFloat;
+        string formattedFloat = value.ToString("F2");
+        text = "Time: " + formattedFloat + " s";
         textUI.text = text;
-        playerMovement.actionRad = value;
+        playerMovement.SetMaxTime(value);
     }
 }

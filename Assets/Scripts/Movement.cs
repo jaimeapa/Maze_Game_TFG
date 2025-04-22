@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Movement : MonoBehaviour
@@ -31,7 +32,7 @@ public class Movement : MonoBehaviour
         }catch(NullReferenceException e){
             Debug.Log("No se encuentra retícula"+ e.Message);
         }
-        speed = 1.5f;   
+        speed = 3f;   
         playerMovement = GameObject.Find("Manager").GetComponent<PlayerMovement>();
         raycastReticula = GameObject.Find("Main Camera").GetComponent<RaycastReticula>();
         stopwatch = GameObject.Find("Stopwatch").GetComponent<Stopwatch>();
@@ -75,18 +76,17 @@ public class Movement : MonoBehaviour
             float startPos = playerMovement.startingPos.z;
 
             float distance = Vector3.Distance(playerRb.transform.position, reticula.transform.position);
-            if(playerMovement.actionRad != null)
-            {
+            //if(playerMovement.actionRad != 0)
+            //{
                 float actionRad = playerMovement.actionRad;
-            }
-            else
+            //}
+            /*else
             {
                 actionRad = 2.5f;
-            }
-            
+            }*/
             // Aplicar la rotación en el eje Z del mundo
             
-            if (distance > 0.1f && distance <= actionRad && inMaze)
+            if (distance > 0.01f && distance <= actionRad && inMaze)
             {
 
                 Vector3 direction = (reticula.transform.position - playerRb.transform.position).normalized;
@@ -178,7 +178,7 @@ public class Movement : MonoBehaviour
                 Destroy(gameObject);
                 Destroy(collision.gameObject);
                 Debug.Log("You got caught!");
-                playerMovement.Restart();
+                playerMovement.Restart("You got caught!");
             }
         }
         
@@ -193,7 +193,7 @@ public class Movement : MonoBehaviour
             Destroy(enemy);
             Debug.Log("You Win!");
             
-            playerMovement.Restart();
+            playerMovement.Restart("You did it!");
             //playerMovement.isPlaying = false;
             //playerMovement.restart = true;
             //restartButton.gameObject.SetActive(true);

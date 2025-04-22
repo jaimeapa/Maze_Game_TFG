@@ -45,14 +45,20 @@ public class PlayerMovement : MonoBehaviour
     public int timeWallHit;
     public String maze;
     public int mazes = 1;
+    public float maxTime;
+    public bool isMaxTime = false;
+    public bool isMaxHits = false;
+    public int maxHits;
 
     // Start is called before the first frame update
     void Start()
     {
         reticula = GameObject.Find("Reticula");
         raycastReticula = GameObject.Find("Main Camera").GetComponent<RaycastReticula>();
+        //restartButton = GameObject.Find("FinishPanel");
         enemySpeed = 0.5f;
         timeWallHit = 0;
+        actionRad = 2.5f;
         try{
             timer = GameObject.Find("Timer").GetComponent<Timer>();
             timer.gameObject.SetActive(false);
@@ -67,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
         {
             menu = GameObject.Find("DifficultySelection");
         }
+        
     }
 
     // Update is called once per frame
@@ -85,10 +92,30 @@ public class PlayerMovement : MonoBehaviour
         {
             startPlaying = true;
             StartCoroutine(StartPlaying());
+            stopwatch.StartStopwatch(0);
         }
         if (raycastReticula.startPlaying)
         {
             instructions.gameObject.SetActive(false);
+        }
+        if (isMaxTime == true && stopwatch.getActualTime(0) > maxTime)
+        {
+            //PlayerMovement pM = GameObject.Find("Manager").GetComponent<PlayerMovement>();
+            restart = false;
+            playerPrefab = GameObject.FindWithTag("Player");
+            enemy = GameObject.FindWithTag("Enemy");
+            Destroy(playerPrefab);
+            Destroy(enemy);
+            Restart("Your time is up!");
+        }
+        if(isMaxHits == true && (int)wallCounter / 2 > maxHits)
+        {
+            restart = false;
+            playerPrefab = GameObject.FindWithTag("Player");
+            enemy = GameObject.FindWithTag("Enemy");
+            Destroy(playerPrefab);
+            Destroy(enemy);
+            Restart("You hit too many walls");
         }
     }
 
@@ -127,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
         raycastReticula.ClearVisitedCells();
         raycastReticula.startPlaying = false;
         scoreText.gameObject.SetActive(true);
-        stopwatch.StartStopwatch(0);
+        //stopwatch.StartStopwatch(0);
         if(showTime)
         {
             time.gameObject.SetActive(true);
@@ -161,16 +188,17 @@ public class PlayerMovement : MonoBehaviour
         scoreText.text = "Score: " + (int)wallCounter/2;
     }
 
-    public void Restart()
+    public void Restart(string message)
     {
         timeTaken = stopwatch.Stop(0);
+        isMaxTime = false;
         Debug.Log(timeTaken);
         scoreText.gameObject.SetActive(false);
         time.gameObject.SetActive(false);
         int wallsHit = (int)wallCounter/2;
         report.setTime(timeTaken);
         report.setWalls(wallsHit);
-        data.text = "Time: " + timeTaken/1000 + "s\nWall Hits: " + wallsHit + " hits\nTime hitting a wall: " + timeWallHit/1000 + " s";
+        data.text = "Time: " + timeTaken/1000 + "s\nWall Hits: " + wallsHit + " hits\nTime hitting a wall: " + timeWallHit/1000 + " s" + "\n" + message;
         maze = mazeGenerator.getMaze();
         report.setData(maze, wallsHit, timeTaken / 1000, timeWallHit / 1000);
         report.WriteReportInFile("/Results/" + DateTime.Now.ToString("yyyy-MM-dd-hh") + mazes, DateTime.Now.ToString("yyyy-MM-dd"));
@@ -178,6 +206,9 @@ public class PlayerMovement : MonoBehaviour
         isPlaying = true;
         mazeGenerator.DestroyMaze();
         restartButton.gameObject.SetActive(true);
+        raycastReticula.startPlaying = false;
+        timeWallHit = 0;
+        startPlaying = false;
     }
 
     public Vector3 GetStartingPos(){
@@ -194,6 +225,14 @@ public class PlayerMovement : MonoBehaviour
     public void SetWallTime(int time)
     {
         timeWallHit = time;
+    }
+    public void SetMaxTime(float time)
+    {
+        maxTime = time;
+    }
+    public void SetMaxHits(int hits)
+    {
+        maxHits = hits;
     }
    
 }

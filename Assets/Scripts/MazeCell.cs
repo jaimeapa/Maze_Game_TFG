@@ -80,4 +80,18 @@ public class MazeCell : MonoBehaviour
     public void VisitAgain(){
         isVistited = false;
     }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is MazeCell other)
+        {
+            return x == other.x && y == other.y;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return x * 73856093 ^ y * 19349663;
+    }
 }

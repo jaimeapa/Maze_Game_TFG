@@ -5,6 +5,8 @@ using System.Linq;
 using Unity.VisualScripting;
 using System;
 using System.IO;
+using UnityEngine.AI;
+//using Oculus.Interaction.Surfaces;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -28,6 +30,7 @@ public class MazeGenerator : MonoBehaviour
     public int mazeShape = 0;
     public int difficulty;
     public Report report;
+    public NavMeshSurface surface;
     // Start is called before the first frame update
     void Start()
     {
@@ -79,6 +82,7 @@ public class MazeGenerator : MonoBehaviour
         maze = "";*/
         report.setMaze(maze);
         report.WriteToFile(DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss"), maze);
+        //surface.BuildNavMesh();
     }
 
     private void GenerateMaze(MazeCell previousCell, MazeCell currentCell)
