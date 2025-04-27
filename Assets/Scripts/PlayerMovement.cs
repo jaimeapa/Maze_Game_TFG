@@ -117,6 +117,13 @@ public class PlayerMovement : MonoBehaviour
             Destroy(enemy);
             Restart("You hit too many walls");
         }
+        if (playEnemy && raycastReticula.startPlaying)
+        {
+            playEnemy = false;
+            StartCoroutine(StartGameCoroutine());
+        }
+
+            
     }
 
     public IEnumerator StartPlaying()
@@ -140,12 +147,6 @@ public class PlayerMovement : MonoBehaviour
         {
             startingPos = new Vector3(25.5f, 9f, 21f);
         }
-        
-        StartCoroutine(StartGameCoroutine());
-    }
-
-    private IEnumerator StartGameCoroutine()
-    {
         instructions.gameObject.SetActive(true);
         instructions.text = "Look at the character to start";
         // Instancia el jugador
@@ -155,19 +156,24 @@ public class PlayerMovement : MonoBehaviour
         raycastReticula.startPlaying = false;
         scoreText.gameObject.SetActive(true);
         //stopwatch.StartStopwatch(0);
-        if(showTime)
+        if (showTime)
         {
             time.gameObject.SetActive(true);
         }
+    }
+
+    private IEnumerator StartGameCoroutine()
+    {
+
+        Debug.Log("Iniciar Temporizador...");
+        timer.gameObject.SetActive(true);
+        timer.IniciarTemporizador();
+        Debug.Log("Temporizador terminado");
+        yield return new WaitForSeconds(5);
+        spawnManager.SpawnEnemy(startingPos);
         
-        if(playEnemy){
-            Debug.Log("Iniciar Temporizador...");
-            timer.gameObject.SetActive(true);
-            timer.IniciarTemporizador();
-            Debug.Log("Temporizador terminado");
-            yield return new WaitForSeconds(5);
-            spawnManager.SpawnEnemy(startingPos);
-        }
+        
+
         
         isPlaying = true;
         
