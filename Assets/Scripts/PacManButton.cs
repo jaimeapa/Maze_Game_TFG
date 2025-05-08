@@ -20,7 +20,14 @@ public class PacManButton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(playerMovement.playEnemy == true)
+        {
+            textUI.text = "Activated";
+            button.GetComponent<Image>().color = Color.yellow;
+        }else{
+            textUI.text = "Deactivated";
+            button.GetComponent<Image>().color = Color.white;
+        }
     }
 
     public void PressButton()
