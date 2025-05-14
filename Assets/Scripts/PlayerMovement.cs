@@ -207,7 +207,7 @@ public class PlayerMovement : MonoBehaviour
         data.text = "Time: " + timeTaken/1000 + "s\nWall Hits: " + wallsHit + " hits\nTime hitting a wall: " + timeWallHit/1000 + " s" + "\n" + message;
         maze = mazeGenerator.getMaze();
         report.setData(maze, wallsHit, timeTaken / 1000, timeWallHit / 1000);
-        report.WriteReportInFile("/Results/" + DateTime.Now.ToString("yyyy-MM-dd-hh") + mazes, DateTime.Now.ToString("yyyy-MM-dd"));
+        report.WriteReportInFile("Results_" + DateTime.Now.ToString("yyyy-MM-dd-hh") + mazes, DateTime.Now.ToString("yyyy-MM-dd"));
         Debug.Log("Restart Button appearing...");
         isPlaying = true;
         mazeGenerator.DestroyMaze();
